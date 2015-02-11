@@ -6,6 +6,8 @@
 
 */
 
+/////
+
 // hint: you'll need to do a full-search of all possible arrangements of pieces!
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
@@ -15,22 +17,24 @@
 
 window.findNRooksSolution = function(n) {
 
-/*
-  var solution = [];
-  var tempArray = [];
+  var solutionArray = [];
+  var rowArray;
 
-  for (var i = 0; i < n; i++) {
-    tempArray = [];
-    for (var j = 0; i < n; j++) {
-      (i === j) ? tempArray[j] = 1 : tempArray[j] = 0;    
-    };
-    solution.push(tempArray);
+  var newFilledArray = function  (value, end) {
+    var newArray = [];
+    for ( var i = 0; i < end; i++) {
+      newArray[i] = value;
+    }
+    return newArray;
+  }
+
+  for ( var row = 0; row < n; row++) {
+    rowArray = newFilledArray(0, n);
+    rowArray[row] = 1
+    solutionArray.push(rowArray);
   };
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
-*/
-  return 10;
+  return solutionArray;
 };
 
 
