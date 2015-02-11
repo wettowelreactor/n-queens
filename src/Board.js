@@ -75,7 +75,7 @@
 
     numOnes: function(arr) {
       var incrementer = 0;
-      arr.forEach(function(x) { 
+      arr.forEach(function(x) {
         if (x === 1) incrementer++;
       });
       return incrementer;
@@ -151,13 +151,14 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      
+
       var colIndex = majorDiagonalColumnIndexAtFirstRow;
       var n = this.get('n');
       var arr = [];
 
-      for (var i = 0; colIndex >= 0; colIndex-- ) {
-        arr.push(this.get(i)[colIndex]);
+      for (var row = n-1; row >=0; row--, colIndex--) {
+        arr.push(this.get(row)[colIndex]);
+
       };
 
       if (this.numOnes(arr) > 1) {
@@ -172,8 +173,8 @@
       var n = this.get('n');
       var retVal = false;
 
-      for (var i = 0; i < n; i++) {
-        retVal = retVal || this.hasMajorDiagonalConflictAt(i);
+      for (var col = 0; col < (2*n) - 1; col++) {
+        retVal = retVal || this.hasMajorDiagonalConflictAt(col);
       };
 
       return retVal;
@@ -190,8 +191,8 @@
       var n = this.get('n');
       var arr = [];
 
-      for (var i = 0; colIndex < n; colIndex++ ) {
-        arr.push(this.get(i)[colIndex]);
+      for (var row = n-1; row >= 0; row--, colIndex++ ) {
+        arr.push(this.get(row)[colIndex]);
       };
 
       if (this.numOnes(arr) > 1) {
@@ -206,8 +207,8 @@
       var n = this.get('n');
       var retVal = false;
 
-      for (var i = 0; i < n; i++) {
-        retVal = retVal || this.hasAnyMinorDiagonalConflicts(i);
+      for (var col = 1-n; col < n; col++) {
+        retVal = retVal || this.hasMinorDiagonalConflictAt(col);
       };
 
       return retVal;
