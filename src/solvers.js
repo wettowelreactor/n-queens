@@ -99,22 +99,22 @@ window.createDeadBoard = function(n) {
 };
 
 
-window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
-  solutions = solutions || {};
-  theBoard = theBoard || new Board({'n':n});
+window.placeNQueens = function (n, size, deadBoard) {
+  var count = 0;
+  size = size || n;
 
+  // theBoard = theBoard || new Board({'n':n});
   if (!deadBoard) {
     deadBoard = createDeadBoard(n);
   }
 
   if(n===0) {
-    var key = JSON.stringify(theBoard.rows());
-    solutions[key] = theBoard.rows();
+    return 1;
   } else {
-    var row = theBoard.get('n') - n;
-    for (var col = 0; col < theBoard.get('n'); col++) {
+    var row = size - n;
+    for (var col = 0; col < size; col++) {
 
-      var majorDiagIndex = getMajorDiagonalIndex(row, col, theBoard.get('n'));
+      var majorDiagIndex = getMajorDiagonalIndex(row, col, size);
       var minorDiagIndex = getMinorDiagonalIndex(row, col);
 
       var colMask = Math.pow(2, col);
@@ -126,15 +126,14 @@ window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
               ((~deadBoard.majorDiags) & majorDiagMask) &&
               ((~deadBoard.minorDiags) & minorDiagMask) ){
 
-        var newBoard = cloneBoard(theBoard);
-        var newdeadBoard = cloneDeadBoard(deadBoard);
+        var newDeadBoard = cloneDeadBoard(deadBoard);
 
-        placeQueen(newBoard, row, col, newdeadBoard);
-        placeNQueens(n - 1 , solutions, newBoard, newdeadBoard);
+        placeQueen(row, col, size, newDeadBoard);
+        count += placeNQueens(n - 1 , size, newDeadBoard);
       }
     }
   }
-  return solutions;
+  return count;
 };
 
 window.markColumnDead = function(column, deadBoard) {
@@ -142,16 +141,16 @@ window.markColumnDead = function(column, deadBoard) {
   deadBoard.cols |= mask;
 };
 
-window.getMajorDiagonalIndex = function(rowIndex, colIndex, n) {
-  return colIndex - rowIndex + n;
+window.getMajorDiagonalIndex = function(rowIndex, colIndex, size) {
+  return colIndex - rowIndex + size;
 };
 
 window.getMinorDiagonalIndex = function(rowIndex, colIndex) {
   return colIndex + rowIndex;
 };
 
-window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard, n) {
-  var column = getMajorDiagonalIndex(rowAt, columnAt, n);
+window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard, size) {
+  var column = getMajorDiagonalIndex(rowAt, columnAt, size);
 
   var mask = Math.pow(2, column);
   deadBoard.majorDiags |= mask;
@@ -165,21 +164,16 @@ window.markMinorDiagonalDead = function(rowAt, columnAt, deadBoard) {
   deadBoard.minorDiags |= mask;
 };
 
-window.placeQueen = function(theBoard, row, col, deadBoard) {
-  theBoard.togglePiece(row, col);
+window.placeQueen = function(row, col, size, deadBoard) {
   markColumnDead(col, deadBoard);
-  markMajorDiagonalDead(row, col, deadBoard, theBoard.get('n'));
+  markMajorDiagonalDead(row, col, deadBoard, size);
   markMinorDiagonalDead(row, col, deadBoard);
 };
 
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutions;
-
-  solutions = placeNQueens(n);
-
-  var solutionCount = Object.keys(solutions).length; //fixme
+  var solutionCount = placeNQueens(n);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
