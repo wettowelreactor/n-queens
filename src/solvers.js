@@ -32,7 +32,7 @@ window.findNRooksSolution = function(n) {
     rowArray = newFilledArray(0, n);
     rowArray[row] = 1
     solutionArray.push(rowArray);
-  };
+  }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solutionArray));
   return solutionArray;
@@ -67,8 +67,18 @@ window.findNQueensSolution = function(n) {
   return solution;
 };
 
+window.cloneBoard = function  (board) {
+  // body...
+  var oldMatrix = board.rows();
+  var newMatrix = [];
+  for (var i = 0; i < oldMatrix.length; i++) {
+    newMatrix.push(oldMatrix[i].slice());
+  };
+  return new Board(newMatrix);
+};
+
 window.placeNQueens = function (n, solutions, theBoard) {
-  //debugger;
+
   solutions = solutions || {};
   theBoard = theBoard || new Board({'n':n});
 
@@ -80,23 +90,18 @@ window.placeNQueens = function (n, solutions, theBoard) {
       /// right here
 
       for (var col = 0; col < theBoard.get('n'); col++) {
-        if (n === 4 && row === 0 && col === 2){
-          debugger;
-        }
+        var newBoard = cloneBoard(theBoard);
 
-        var newBoard = new Board(theBoard.rows());
         if (attemptToPlaceQueen(newBoard, row, col) ) {
           placeNQueens(n - 1 , solutions, newBoard );
         }
-      };
-    };
+      }
+    }
   }
   return solutions;
-}
+};
 
-
-
-window.attemptToPlaceQueen = function  (theBoard, row, col) {
+window.attemptToPlaceQueen = function(theBoard, row, col) {
   if (theBoard.get(row)[col] === 0) {
     theBoard.togglePiece(row, col);
     if(theBoard.hasAnyQueensConflicts()) {
@@ -108,7 +113,7 @@ window.attemptToPlaceQueen = function  (theBoard, row, col) {
   } else {
     return false;
   }
-}
+};
 
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
