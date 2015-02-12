@@ -80,16 +80,16 @@ window.cloneBoard = function  (board) {
   return new Board(cloneMatrix(board.rows()));
 };
 
+window.cloneDeadBoard = function (deadBoard) {
+
+  return {'cols': deadBoard.cols,
+    'majorDiags': deadBoard.majorDiags,
+    'minorDiags': deadBoard.minorDiags
+  };
+}
+
 window.createDeadBoard = function(n) {
-  var deadBoard = [];
-  var emptyRow = [];
-  for (var i = 0; i < n; i++) {
-    emptyRow[i] = 0;
-  }
-  for (i = 0; i < n; i++) {
-    deadBoard.push(emptyRow.slice());
-  }
-  return deadBoard;
+  return {'cols': 0, 'majorDiags': 0, 'minorDiags': 0};
 };
 
 
@@ -108,9 +108,20 @@ window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
     var row = theBoard.get('n') - n;
     for (var col = 0; col < theBoard.get('n'); col++) {
 
-      if (deadBoard[row][col] === 0 ) {
+      var majorDiagIndex = getMajorDiagonalIndex(row, col, theBoard.get('n'));
+      var minorDiagIndex = getMinorDiagonalIndex(row, col);
+
+      var colMask = Math.pow(2, col);
+      var majorDiagMask = Math.pow(2, majorDiagIndex);
+      var minorDiagMask = Math.pow(2, minorDiagIndex);
+
+
+      if ( ((~deadBoard.cols) & colMask) &&
+              ((~deadBoard.majorDiags) & majorDiagMask) &&
+              ((~deadBoard.minorDiags) & minorDiagMask) ){
+
         var newBoard = cloneBoard(theBoard);
-        var newdeadBoard = cloneMatrix(deadBoard);
+        var newdeadBoard = cloneDeadBoard(deadBoard);
 
         placeQueen(newBoard, row, col, newdeadBoard);
         placeNQueens(n - 1 , solutions, newBoard, newdeadBoard);
@@ -120,50 +131,38 @@ window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
   return solutions;
 };
 
-window.markRowDead = function(row, deadBoard) {
-  for (var i = 0; i < deadBoard[row].length ; i++) {
-    deadBoard[row][i] = 1;
-  }
-};
-
 window.markColumnDead = function(column, deadBoard) {
-  for (var i = 0; i < deadBoard.length ; i++) {
-    deadBoard[i][column] = 1;
-  }
+  var mask = Math.pow(2, column);
+  deadBoard.cols |= mask;
 };
 
-window.getMajorDiagonalIndex = function(rowIndex, colIndex) {
-  return colIndex - rowIndex;
+window.getMajorDiagonalIndex = function(rowIndex, colIndex, n) {
+  return colIndex - rowIndex + n;
 };
 
 window.getMinorDiagonalIndex = function(rowIndex, colIndex) {
   return colIndex + rowIndex;
 };
 
-window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard) {
-  var column = getMajorDiagonalIndex(rowAt, columnAt);
+window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard, n) {
+  var column = getMajorDiagonalIndex(rowAt, columnAt, n);
 
-  for (var row = 0; row < deadBoard.length; row++, column++) {
-    deadBoard[row][column] = 1;
-  }
+  var mask = Math.pow(2, column);
+  deadBoard.majorDiags |= mask;
 
 };
 
 window.markMinorDiagonalDead = function(rowAt, columnAt, deadBoard) {
   var column = getMinorDiagonalIndex(rowAt, columnAt);
 
-  for (var row = 0; row < deadBoard.length; row++, column--) {
-    if ( column < deadBoard.length) {
-      deadBoard[row][column] = 1;
-    }
-  }
+  var mask = Math.pow(2, column);
+  deadBoard.minorDiags |= mask;
 };
 
 window.placeQueen = function(theBoard, row, col, deadBoard) {
   theBoard.togglePiece(row, col);
-  markRowDead(row, deadBoard);
   markColumnDead(col, deadBoard);
-  markMajorDiagonalDead(row, col, deadBoard);
+  markMajorDiagonalDead(row, col, deadBoard, theBoard.get('n'));
   markMinorDiagonalDead(row, col, deadBoard);
 };
 
