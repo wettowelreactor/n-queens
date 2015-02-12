@@ -34,6 +34,7 @@ window.findNRooksSolution = function(n) {
     solutionArray.push(rowArray);
   };
 
+  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solutionArray));
   return solutionArray;
 };
 
@@ -51,8 +52,8 @@ window.countNRooksSolutions = function(n) {
     return f[n] = factorial(n-1) * n;
   }
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   var solutionCount = factorial(n);
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
@@ -66,11 +67,60 @@ window.findNQueensSolution = function(n) {
   return solution;
 };
 
+window.placeNQueens = function (n, solutions, theBoard) {
+  //debugger;
+  solutions = solutions || {};
+  theBoard = theBoard || new Board({'n':n});
+
+  if(n===0) {
+    var key = JSON.stringify(theBoard.rows());
+    solutions[key] = theBoard.rows();
+  } else {
+    for (var row = 0; row < theBoard.get('n'); row++) {
+      /// right here
+
+      for (var col = 0; col < theBoard.get('n'); col++) {
+        if (n === 4 && row === 0 && col === 2){
+          debugger;
+        }
+
+        var newBoard = new Board(theBoard.rows());
+        if (attemptToPlaceQueen(newBoard, row, col) ) {
+          placeNQueens(n - 1 , solutions, newBoard );
+        }
+      };
+    };
+  }
+  return solutions;
+}
+
+
+
+window.attemptToPlaceQueen = function  (theBoard, row, col) {
+  if (theBoard.get(row)[col] === 0) {
+    theBoard.togglePiece(row, col);
+    if(theBoard.hasAnyQueensConflicts()) {
+      theBoard.togglePiece(row, col);
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}
+
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutions;
+
+  solutions = placeNQueens(n);
+
+  var solutionCount = Object.keys(solutions).length; //fixme
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+
