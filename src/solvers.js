@@ -26,11 +26,11 @@ window.findNRooksSolution = function(n) {
       newArray[i] = value;
     }
     return newArray;
-  }
+  };
 
   for ( var row = 0; row < n; row++) {
     rowArray = newFilledArray(0, n);
-    rowArray[row] = 1
+    rowArray[row] = 1;
     solutionArray.push(rowArray);
   }
 
@@ -45,7 +45,7 @@ window.countNRooksSolutions = function(n) {
 
   var f = [];
   function factorial (n) {
-    if (n == 0 || n == 1)
+    if (n === 0 || n == 1)
       return 1;
     if (f[n] > 0)
       return f[n];
@@ -61,7 +61,7 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var solution;
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
@@ -72,9 +72,9 @@ window.cloneMatrix = function (matrix) {
   var newMatrix = [];
   for (var i = 0; i < matrix.length; i++) {
     newMatrix.push(matrix[i].slice());
-  };
+  }
   return newMatrix;
-}
+};
 
 window.cloneBoard = function  (board) {
   return new Board(cloneMatrix(board.rows()));
@@ -85,12 +85,12 @@ window.createDeadBoard = function(n) {
   var emptyRow = [];
   for (var i = 0; i < n; i++) {
     emptyRow[i] = 0;
-  };
+  }
   for (i = 0; i < n; i++) {
     deadBoard.push(emptyRow.slice());
-  };
+  }
   return deadBoard;
-}
+};
 
 
 window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
@@ -144,7 +144,7 @@ window.getMinorDiagonalIndex = function(rowIndex, colIndex) {
 };
 
 window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard) {
-  var column = getMajorDiagonalIndex(row, column);
+  var column = getMajorDiagonalIndex(rowAt, columnAt);
 
   for (var row = 0; row < deadBoard.length; row++, column++) {
     deadBoard[row][column] = 1;
@@ -152,8 +152,8 @@ window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard) {
 
 };
 
-window.markMinorDiagonalDead = function(row, column, deadBoard) {
-  var column = getMinorDiagonalIndex(row, column);
+window.markMinorDiagonalDead = function(rowAt, columnAt, deadBoard) {
+  var column = getMinorDiagonalIndex(rowAt, columnAt);
 
   for (var row = 0; row < deadBoard.length; row++, column--) {
     if ( column < deadBoard.length) {

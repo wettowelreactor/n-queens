@@ -106,7 +106,7 @@
 
       for (var i = 0; i < n; i++) {
         retVal = retVal || this.hasRowConflictAt(i);
-      };
+      }
 
       return retVal;
     },
@@ -123,7 +123,7 @@
 
       for (var i = 0; i < n; i++) {
         arr.push(this.get(i)[colIndex]);
-      };
+      }
 
       if (this.numOnes(arr) > 1) {
         return true;
@@ -139,7 +139,7 @@
 
       for (var i = 0; i < n; i++) {
         retVal = retVal || this.hasColConflictAt(i);
-      };
+      }
 
       return retVal;
     },
@@ -158,7 +158,7 @@
 
       for (var row = 0; row < n; row++, colIndex++) {
         arr.push(this.get(row)[colIndex]);
-      };
+      }
 
       if (this.numOnes(arr) > 1) {
         return true;
@@ -174,7 +174,7 @@
 
       for (var col = 0; col < (2*n) - 1; col++) {
         retVal = retVal || this.hasMajorDiagonalConflictAt(col);
-      };
+      }
 
       return retVal;
     },
@@ -192,7 +192,7 @@
 
       for (var row = 0; row < n; row++, colIndex-- ) {
         arr.push(this.get(row)[colIndex]);
-      };
+      }
 
       if (this.numOnes(arr) > 1) {
         return true;
@@ -208,7 +208,7 @@
 
       for (var col = 1-n; col < n; col++) {
         retVal = retVal || this.hasMinorDiagonalConflictAt(col);
-      };
+      }
 
       return retVal;
     }
