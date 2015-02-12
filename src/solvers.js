@@ -94,7 +94,6 @@ window.createDeadBoard = function(n) {
 
 
 window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
-
   solutions = solutions || {};
   theBoard = theBoard || new Board({'n':n});
 
@@ -106,17 +105,15 @@ window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
     var key = JSON.stringify(theBoard.rows());
     solutions[key] = theBoard.rows();
   } else {
-    for (var row = 0; row < theBoard.get('n'); row++) {
-      for (var col = 0; col < theBoard.get('n'); col++) {
+    var row = theBoard.get('n') - n;
+    for (var col = 0; col < theBoard.get('n'); col++) {
 
-        if (deadBoard[row][col] === 0 ) {
-          var newBoard = cloneBoard(theBoard);
-          var newdeadBoard = cloneMatrix(deadBoard);
+      if (deadBoard[row][col] === 0 ) {
+        var newBoard = cloneBoard(theBoard);
+        var newdeadBoard = cloneMatrix(deadBoard);
 
-          if (attemptToPlaceQueen(newBoard, row, col, newdeadBoard)) {
-            placeNQueens(n - 1 , solutions, newBoard, newdeadBoard);
-          }
-        }
+        placeQueen(newBoard, row, col, newdeadBoard);
+        placeNQueens(n - 1 , solutions, newBoard, newdeadBoard);
       }
     }
   }
@@ -162,22 +159,12 @@ window.markMinorDiagonalDead = function(rowAt, columnAt, deadBoard) {
   }
 };
 
-window.attemptToPlaceQueen = function(theBoard, row, col, deadBoard) {
-  if (theBoard.get(row)[col] === 0) {
-    theBoard.togglePiece(row, col);
-    if(theBoard.hasAnyQueenConflictsOn(row, col)) {
-      theBoard.togglePiece(row, col);
-      return false;
-    } else {
-      markRowDead(row, deadBoard);
-      markColumnDead(col, deadBoard);
-      markMajorDiagonalDead(row, col, deadBoard);
-      markMinorDiagonalDead(row, col, deadBoard);
-      return true;
-    }
-  } else {
-    return false;
-  }
+window.placeQueen = function(theBoard, row, col, deadBoard) {
+  theBoard.togglePiece(row, col);
+  markRowDead(row, deadBoard);
+  markColumnDead(col, deadBoard);
+  markMajorDiagonalDead(row, col, deadBoard);
+  markMinorDiagonalDead(row, col, deadBoard);
 };
 
 
