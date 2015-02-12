@@ -104,7 +104,7 @@ window.placeNQueens = function (n, solutions, theBoard) {
 window.attemptToPlaceQueen = function(theBoard, row, col) {
   if (theBoard.get(row)[col] === 0) {
     theBoard.togglePiece(row, col);
-    if(theBoard.hasAnyQueensConflicts()) {
+    if(theBoard.hasAnyQueenConflictsOn(row, col)) {
       theBoard.togglePiece(row, col);
       return false;
     } else {

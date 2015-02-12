@@ -151,14 +151,13 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-
       var colIndex = majorDiagonalColumnIndexAtFirstRow;
+
       var n = this.get('n');
       var arr = [];
 
-      for (var row = n-1; row >=0; row--, colIndex--) {
+      for (var row = 0; row < n; row++, colIndex++) {
         arr.push(this.get(row)[colIndex]);
-
       };
 
       if (this.numOnes(arr) > 1) {
@@ -191,7 +190,7 @@
       var n = this.get('n');
       var arr = [];
 
-      for (var row = n-1; row >= 0; row--, colIndex++ ) {
+      for (var row = 0; row < n; row++, colIndex-- ) {
         arr.push(this.get(row)[colIndex]);
       };
 
