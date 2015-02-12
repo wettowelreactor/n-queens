@@ -67,33 +67,55 @@ window.findNQueensSolution = function(n) {
   return solution;
 };
 
-window.cloneBoard = function  (board) {
+window.cloneMatrix = function (matrix) {
   // body...
-  var oldMatrix = board.rows();
   var newMatrix = [];
-  for (var i = 0; i < oldMatrix.length; i++) {
-    newMatrix.push(oldMatrix[i].slice());
+  for (var i = 0; i < matrix.length; i++) {
+    newMatrix.push(matrix[i].slice());
   };
-  return new Board(newMatrix);
+  return newMatrix;
+}
+
+window.cloneBoard = function  (board) {
+  return new Board(cloneMatrix(board.rows()));
 };
 
-window.placeNQueens = function (n, solutions, theBoard) {
+window.createDeadBoard = function(n) {
+  var deadBoard = [];
+  var emptyRow = [];
+  for (var i = 0; i < n; i++) {
+    emptyRow[i] = 0;
+  };
+  for (i = 0; i < n; i++) {
+    deadBoard.push(emptyRow.slice());
+  };
+  return deadBoard;
+}
+
+
+window.placeNQueens = function (n, solutions, theBoard, deadBoard) {
 
   solutions = solutions || {};
   theBoard = theBoard || new Board({'n':n});
+
+  if (!deadBoard) {
+    deadBoard = createDeadBoard(n);
+  }
 
   if(n===0) {
     var key = JSON.stringify(theBoard.rows());
     solutions[key] = theBoard.rows();
   } else {
     for (var row = 0; row < theBoard.get('n'); row++) {
-      /// right here
-
       for (var col = 0; col < theBoard.get('n'); col++) {
-        var newBoard = cloneBoard(theBoard);
 
-        if (attemptToPlaceQueen(newBoard, row, col) ) {
-          placeNQueens(n - 1 , solutions, newBoard );
+        if (deadBoard[row][col] === 0 ) {
+          var newBoard = cloneBoard(theBoard);
+          var newdeadBoard = cloneMatrix(deadBoard);
+
+          if (attemptToPlaceQueen(newBoard, row, col, newdeadBoard)) {
+            placeNQueens(n - 1 , solutions, newBoard, newdeadBoard);
+          }
         }
       }
     }
@@ -101,13 +123,56 @@ window.placeNQueens = function (n, solutions, theBoard) {
   return solutions;
 };
 
-window.attemptToPlaceQueen = function(theBoard, row, col) {
+window.markRowDead = function(row, deadBoard) {
+  for (var i = 0; i < deadBoard[row].length ; i++) {
+    deadBoard[row][i] = 1;
+  }
+};
+
+window.markColumnDead = function(column, deadBoard) {
+  for (var i = 0; i < deadBoard.length ; i++) {
+    deadBoard[i][column] = 1;
+  }
+};
+
+window.getMajorDiagonalIndex = function(rowIndex, colIndex) {
+  return colIndex - rowIndex;
+};
+
+window.getMinorDiagonalIndex = function(rowIndex, colIndex) {
+  return colIndex + rowIndex;
+};
+
+window.markMajorDiagonalDead = function(rowAt, columnAt, deadBoard) {
+  var column = getMajorDiagonalIndex(row, column);
+
+  for (var row = 0; row < deadBoard.length; row++, column++) {
+    deadBoard[row][column] = 1;
+  }
+
+};
+
+window.markMinorDiagonalDead = function(row, column, deadBoard) {
+  var column = getMinorDiagonalIndex(row, column);
+
+  for (var row = 0; row < deadBoard.length; row++, column--) {
+    if ( column < deadBoard.length) {
+      deadBoard[row][column] = 1;
+    }
+  }
+};
+
+window.attemptToPlaceQueen = function(theBoard, row, col, deadBoard) {
   if (theBoard.get(row)[col] === 0) {
     theBoard.togglePiece(row, col);
     if(theBoard.hasAnyQueenConflictsOn(row, col)) {
       theBoard.togglePiece(row, col);
       return false;
     } else {
+      markRowDead(row, deadBoard);
+      markColumnDead(col, deadBoard);
+      markMajorDiagonalDead(row, col, deadBoard);
+      markMinorDiagonalDead(row, col, deadBoard);
       return true;
     }
   } else {
