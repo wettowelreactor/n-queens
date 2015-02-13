@@ -60,13 +60,13 @@ window.findNQueensSolution = function(n) {
   var solutions = nqueens.placeNQueens(n);
   var solution;
   if (n === 2 || n === 3) {
-    var empty = []
+    var empty = [];
     solution = [];
     for (var i = 0; i < n; i++) {
       solution.push(empty);
-    };
+    }
   } else {
-    var solution = solutions[Object.keys(solutions)[0]];
+    solution = solutions[Object.keys(solutions)[0]];
   }
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));

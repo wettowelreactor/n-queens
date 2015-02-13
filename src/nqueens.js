@@ -5,9 +5,9 @@ nqueens.cloneDeadBoard = function (deadBoard) {
     'majorDiags': deadBoard.majorDiags,
     'minorDiags': deadBoard.minorDiags
   };
-}
+};
 
-nqueens.createDeadBoard = function(n) {
+nqueens.createDeadBoard = function() {
   return {'cols': 0, 'majorDiags': 0, 'minorDiags': 0};
 };
 
@@ -16,9 +16,8 @@ nqueens.placeNQueens = function (n, size, deadBoard) {
   var count = 0;
   size = size || n;
 
-  // theBoard = theBoard || new Board({'n':n});
   if (!deadBoard) {
-    deadBoard = nqueens.createDeadBoard(n);
+    deadBoard = nqueens.createDeadBoard();
   }
 
   if(n===0) {
